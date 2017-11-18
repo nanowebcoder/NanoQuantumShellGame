@@ -1,0 +1,179 @@
+﻿@{
+    ViewData["Title"] = "NanoQuantum Shell Game";
+}
+@model  ShellGameModel
+
+
+    <form id="form1" runat="server" method="post">
+        <div class="container">
+
+            <div class="jumbotron" style="background-color:#E63233;color:white">
+                <h1>NanoQuantum - The Shell Game </h1>
+                <h3 class="blockquote-footer">by Kevin E. Casey</h3>
+            </div>
+
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Welcome</h3>
+                </div>
+                <div class="panel-body">
+
+                    <p class="lead">
+                        Hello and welcome to a quantum version of the con artists's classic Shell Game.
+                    </p>
+                    <p>
+                        Now I like challenges—and so I asked myself: Could I map a real world problem into a real-world quantum computing environment and solve it?  Is it possible to use a quantum computer,
+                        just like a classical computer, to do something less ethereal than factoring primes, something real?
+                    </p>
+                    <p>
+                        Enter the Shell Game.  In this online version of the classic con game, we can demonstrate how to use a quantum computer to solve the riddle of the game by deducing under which Shell the ball
+                        has been hidden.  For more on this, read the article <a href="?">here</a>.
+                    </p>
+                    <p>The source code for this website and the quantum code is available on github at <a href="https://github.com/nanowebcoder/NanoQuantumShellGame">https://github.com/nanowebcoder/NanoQuantumShellGame</a>.</p>
+                    <p>To start simply select which of the four shells you would like to hide the ball under.</p>
+                </div>
+
+                <div class="row">
+                    <div class="col Shell" id="shell1" data-shellnumber="1">
+                        <img src="images/Shell1.png" id="imageShell1" class="img-fluid" />
+                    </div>
+                    <div class="col Shell" id="shell2" data-shellnumber="2">
+                        <img src="images/Shell2.png" id="imageShell2" class="img-fluid" />
+                    </div>
+                    <div class="col Shell" id="shell3" data-shellnumber="3">
+                        <img src="images/Shell3.png" id="imageShell3" class="img-fluid" />
+                    </div>
+                    <div class="col Shell" id="shell4" data-shellnumber="4">
+                        <img src="images/Shell4.png" id="imageShell4" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="row"><p>&nbsp;</p></div>
+                <div class="row">
+                    <div class="col text-center">
+                        <button class="btn btn-danger " type="submit" onclick="Compute()" id="btnCompute">Compute!</button>
+                    </div>
+                </div>
+                <div class="row"><p>&nbsp;</p></div>
+
+                <div id="results" class="col text-center" style="margin-top:15px;">
+                    <p class="alert alert-success">
+                        <strong>Congratulations!</strong>
+                        <span id="resultsText">The quantum processor at IBM has computed that you had selected Shell #.  Does this match what you selected?</span>
+                    </p>
+                    <div class="row">
+                        <div class="col form-group">
+                            <div class="d-flex flex-column">
+                                <label for="QASMfield" class="control-label"><strong>QASM Code Used:</strong></label>
+                                <code class="prettyprint" id="QASMfield">@Model.QASM</code>
+                            </div>
+                        </div>
+                        <div class="col form-group">
+                            <div class="d-flex flex-column">
+                                <label for="executionResultsfield" class="control-label"><strong>Execution Results:</strong></label>
+                                <code class="prettyprint" id="executionResultsfield">@Model.ExecutionResults</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(model => model.ShellSelected);
+    
+
+    </form>
+
+
+
+
+    <script>
+            function Compute() {
+
+                var selectedShell = $('#ShellSelected').val();
+                console.log("Value of selected shell: " + $('#ShellSelected').val());
+                if (selectedShell<1 || selectedShell>4  || !selectedShell)
+                {
+                    event.preventDefault();
+                    alert('Please select a shell');
+                    return false;
+                }
+                $("#btnCompute").text("Please wait...");
+                console.log("Value of selected shell: " + $('#ShellSelected').val());
+            }
+
+
+            function ClearShells() {
+                $('#ShellSelected').val(0);
+                $('#imageShell1').attr('src', 'images/Shell1.png');
+                $('#imageShell2').attr('src', 'images/Shell2.png');
+                $('#imageShell3').attr('src', 'images/Shell3.png');
+                $('#imageShell4').attr('src', 'images/Shell4.png');
+            }
+
+            function SetSelectedShell(shellNumber)
+            {
+                console.log("Setting shell #" + shellNumber);
+
+                ClearShells();
+                $('#ShellSelected').val(shellNumber);
+                switch (shellNumber) {
+                    case '1':
+                        $('#imageShell1').attr('src', 'images/ShellWithNut1.png');
+                        break;
+                    case '2':
+                        $('#imageShell2').attr('src', 'images/ShellWithNut2.png');
+                        break;
+                    case '3':
+                        $('#imageShell3').attr('src', 'images/ShellWithNut3.png');
+                        break;
+                    case '4':
+                        $('#imageShell4').attr('src', 'images/ShellWithNut4.png');
+                        break;
+                    default:
+                        $('#ShellSelected').val(0);
+                }
+                console.log("shell #" + shellNumber + " was set");
+            }
+
+
+            $(document).ready(function () {
+                //make the display match
+                SetSelectedShell($('#ShellSelected').val())
+
+
+                //show results if we have it
+                var computedShell ="@Model.ComputedShell" // $('#ComputedShell').val();
+
+                console.log("Computed value of shell " + computedShell);
+                console.log("showing results..." + $('#results').is(':visible'));
+
+                if (computedShell > 0 && computedShell < 5)
+                {
+                    console.log("We have results...");
+                    $('#resultsText').html("The quantum processor at IBM has computed that you selected <b>Shell #" + computedShell + "</b>. Does this match what you selected?");
+                    $('#results').show();
+                    $('#ComputedShell').val(0)
+                    window.location.hash = 'results'
+                } else {
+                    console.log("We  dont have results...");
+                    $('#results').hide();
+                }
+
+
+
+            $('.Shell').click(function () {
+
+                var shellNumber= this.getAttribute("data-shellnumber")
+                console.log("Clicked" + shellNumber);
+
+                //hide any results and reset result value
+                $('#results').hide();
+                $('#ComputedShell').val(0);
+
+                SetSelectedShell(shellNumber)
+
+            });
+        });
+
+    </script>
+
