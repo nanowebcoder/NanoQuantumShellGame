@@ -2,8 +2,6 @@
 
 In this online version of the classic con game, we demonstrate how to use IBM's quantum computer to solve the riddle of the game by deducing which Shell the ball has been hidden under.
 
-[Check your link rot](https://mntr.dk/2015/check-your-link-rot/).
-
 This is a companion to an online [blog article](https://developer.ibm.com/dwblog/2017/quantum-computing-shell-game-ibm-q/) and a [how-to article](https://www.ibm.com/developerworks/library/os-quantum-computing-shell-game/). 
 
 You can visit the working version of the shell game at https://nanoquantumshellgame.mybluemix.net/
